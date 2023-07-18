@@ -1,9 +1,10 @@
 using Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Data
 {
-	public class AppDbContext : DbContext
+	public class AppDbContext : IdentityDbContext
 	{
 		public DbSet<Collection> Collections { get; set; }
 		public DbSet<Item> Items { get; set; }
@@ -12,10 +13,10 @@ namespace Data
 			
 		}
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			modelBuilder.Entity<Collection>().HasMany(t => t.Items);
-			modelBuilder.Entity<Item>();
-		}
+		// protected override void OnModelCreating(ModelBuilder modelBuilder)
+		// {
+		// 	modelBuilder.Entity<Collection>().HasMany(t => t.Items);
+		// 	modelBuilder.Entity<Item>();
+		// }
 	}
 }
