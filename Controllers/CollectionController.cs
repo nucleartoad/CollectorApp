@@ -1,4 +1,4 @@
-using Data;
+using Services;
 using Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,50 +9,73 @@ namespace Controllers
 	[ApiController]
 	public class CollectionController : ControllerBase
 	{
-		private static AppDbContext _context;
-		public CollectionController(AppDbContext context)
+		private static CollectionService _service;
+		public CollectionController(CollectionService service)
 		{
-			_context = context;
+			_service = service;
 		}
 
 		// get collections
 		[HttpGet]
-		public async Task<IActionResult> GetCollections()
+		public async Task<ActionResult<List<Collection>>> GetCollections()
 		{
-			var collections = await _context.Collections.Include( e => e.Items ).ToListAsync();
-			return Ok(collections);
+			var collections = await _service.GetCollections();
+			if(collections == null) 
+			{
+				return NotFound();
+			}
+
+			return collections;
 		}
 
 		// get collection
 		[HttpGet("{id}")]
-		public async Task<IActionResult> GetCollection(int id)
+		public async Task<ActionResult<Collection>> GetCollection(int id)
 		{
-			var collection = await _context.Collections.FirstOrDefaultAsync(e => e.Id == id);
-			return Ok(collection);
+			var collection = await _service.GetCollection(id);
+			if(collection == null)
+			{
+				return NotFound();
+			}
+
+			return collection;
 		}
 
 		// create collection
 		[HttpPost]
-		public async Task CreateCollection(Collection collection)
+		public async Task<IActionResult> CreateCollection(Collection collection)
 		{
-			await _context.Collections.AddAsync(collection);
+			var newCollection = await _service.CreateCollection(collection);
+			return CreatedAtAction(nameof(GetCollection), new { id = newCollection.Id }, newCollection);
 		}
 
 		// update collection
-		[HttpPut]
-		public async Task UpdateCollection(Collection collection)
+		[HttpPut("{id}")]
+		public async Task<IActionResult> UpdateCollection(int id, Collection collection)
 		{
-			_context.Entry(collection).State = EntityState.Modified;
-			await _context.SaveChangesAsync();
+			if (id != collection.Id)
+			{
+				return BadRequest();
+			}
+
+			try
+			{
+				await _service.UpdateCollection(collection);
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				throw;
+			}
+
+			return NoContent();
 		}
 
 		// delete collection
 		[HttpDelete]
-		public async Task DeleteCollection(int id)
+		public async Task<IActionResult> DeleteCollection(int id)
 		{
-			var collection = await _context.Collections.FindAsync(id);
-			_context.Collections.Remove(collection);
-			await _context.SaveChangesAsync();
+			await _service.DeleteCollection(id);
+			return NoContent();
 		}
 	}
 }

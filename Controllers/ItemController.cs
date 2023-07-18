@@ -1,5 +1,5 @@
+using Services;
 using Models;
-using Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,43 +9,60 @@ namespace Controllers
 	[ApiController]
 	public class ItemController : ControllerBase
 	{
-		private static AppDbContext _context;
-		public ItemController(AppDbContext context)
+		private static ItemService _service;
+		public ItemController(ItemService service)
 		{
-			_context = context;
+			_service = service;
 		}
 		
 		// get item
 		[HttpGet]
-		public async Task<IActionResult> GetItem(int id)
+		public async Task<ActionResult<Item>> GetItem(int id)
 		{
-			var items = await _context.Items.ToListAsync();
-			return Ok(items.FirstOrDefault(e => e.Id == id));
+			var item = await _service.GetItem(id);
+			if(item == null)
+			{
+				return NotFound();
+			}
+
+			return item;
 		}
 
 		// add item
 		[HttpPost]
-		public async Task AddItem(Item item)
+		public async Task<IActionResult> AddItem(Item item)
 		{
-			_context.Items.Add(item);
-			await _context.SaveChangesAsync();
+			var newItem = await _service.AddItem(item);
+			return CreatedAtAction(nameof(newItem), new { id = newItem.Id}, newItem);
 		}
 
 		// update item
-		[HttpPut]
-		public async Task UpdateItem(Item item)
+		[HttpPut("{id}")]
+		public async Task<IActionResult> UpdateItem(int id, Item item)
 		{
-			_context.Entry(item).State = EntityState.Modified;
-			await _context.SaveChangesAsync();
+			if(id != item.Id)
+			{
+				return BadRequest();
+			}
+
+			try
+			{
+				await _service.UpdateItem(item);
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				throw;
+			}
+
+			return NoContent();
 		}
 		
 		// delete item
 		[HttpDelete]
-		public async Task DeleteItem(int id)
+		public async Task<IActionResult> DeleteItem(int id)
 		{
-			var item = await _context.Items.FindAsync(id);
-			_context.Items.Remove(item);
-			await _context.SaveChangesAsync();
+			await _service.DeleteItem(id);
+			return NoContent();
 		}
 	}
 }
