@@ -13,10 +13,11 @@ namespace Data
 			
 		}
 
-		// protected override void OnModelCreating(ModelBuilder modelBuilder)
-		// {
-		// 	modelBuilder.Entity<Collection>().HasMany(t => t.Items);
-		// 	modelBuilder.Entity<Item>();
-		// }
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			base.OnModelCreating(modelBuilder);
+			modelBuilder.Entity<Collection>().HasMany(t => t.Items);
+			modelBuilder.Entity<Item>();
+		}
 	}
 }

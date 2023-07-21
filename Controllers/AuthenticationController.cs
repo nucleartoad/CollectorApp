@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers
 {
@@ -136,6 +138,13 @@ namespace Controllers
 				},
 				Result = false
 			});
+		}
+
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpGet("currentUser")]
+		public async Task<string> GetUser()
+		{
+			return User.Identity.Name;
 		}
 
 		private string GenerateJwtToken(IdentityUser user)

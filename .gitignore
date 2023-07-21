@@ -2,3 +2,4 @@
 /obj/
 /Migrations/
 CollectorApp.db
+.vscode
