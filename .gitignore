@@ -3,3 +3,5 @@
 /Migrations/
 CollectorApp.db
 .vscode
+CollectorApp.db-shm
+CollectorApp.db-wal

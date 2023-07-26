@@ -1,13 +1,9 @@
-using Configurations;
 using Models;
 using Models.Dtos;
+using Services;
 
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
@@ -17,18 +13,26 @@ namespace Controllers
 	[ApiController]
 	public class AuthenticationController : ControllerBase
 	{
+		private static AuthenticationService _service;
 		private readonly UserManager<IdentityUser> _userManager;
-		private readonly IConfiguration _configuration;
 		// private readonly JwtConfig _jwtConfig;
 
 		public AuthenticationController (
-			UserManager<IdentityUser> userManager,
-			IConfiguration configuration)
+			AuthenticationService authenticationService,
+			UserManager<IdentityUser> userManager)
 			//JwtConfig jwtConfig)
 		{
+			_service = authenticationService;
 			_userManager = userManager;
-			_configuration = configuration;
 			// _jwtConfig = jwtConfig;
+		}
+
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpGet]
+		[Route("GetUser")]
+		public string GetUser()
+		{
+			return User.Identity.Name;
 		}
 
 		[HttpPost]
@@ -53,14 +57,7 @@ namespace Controllers
 
 					if (isCreated.Succeeded)
 					{
-						// generate token
-						var token = GenerateJwtToken(newUser);
-
-						return Ok(new AuthResult()
-						{
-							Result = true,
-							Token = token
-						});
+						return Ok();
 					}
 
 					return BadRequest(new AuthResult()
@@ -101,13 +98,7 @@ namespace Controllers
 
 					if(isCorrect)
 					{
-						var token = GenerateJwtToken(user);
-
-						return Ok(new AuthResult()
-						{
-							Result = true,
-							Token = token
-						});
+						return Ok(await _service.GenerateJwtToken(user));
 					}
 
 					return BadRequest(new AuthResult()
@@ -140,36 +131,56 @@ namespace Controllers
 			});
 		}
 
-		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-		[HttpGet("currentUser")]
-		public async Task<string> GetUser()
+		[HttpPost]
+		[Route("Logout")]
+		public async Task<IActionResult> Logout([FromBody] TokenRequestDto tokenRequestDto)
 		{
-			return User.Identity.Name;
+			if(ModelState.IsValid)
+			{
+				await _service.RemoveRefreshToken(tokenRequestDto);
+				return Ok("User has been logged out");
+			}
+			return BadRequest(new AuthResult()
+			{
+				Errors = new List<string>()
+				{
+					"Invalid parameters"
+				},
+				Result = false
+			});
 		}
 
-		private string GenerateJwtToken(IdentityUser user)
+		[HttpPost]
+		[Route("RefreshToken")]
+		public async Task<IActionResult> RefreshToken([FromBody] TokenRequestDto tokenRequestDto)
 		{
-			var jwtTokenHandler = new JwtSecurityTokenHandler();
-
-			var key = Encoding.UTF8.GetBytes(_configuration.GetSection("JwtConfig:Secret").Value);
-
-			// token descriptor
-			var tokenDescriptor = new SecurityTokenDescriptor()
+			if(ModelState.IsValid)
 			{
-				Subject = new ClaimsIdentity(new []
+				var result = await _service.VerifyAndGenerateToken(tokenRequestDto, _userManager);
+
+				if(result != null)
 				{
-					new Claim("Id", user.Id),
-					new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
-				}),
+					return Ok(result);
+				}
 
-				Expires = DateTime.Now.AddHours(1),
-				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-			};
+				return BadRequest(new AuthResult()
+				{
+					Errors = new List<string>()
+					{
+						"Invalid tokens"
+					},
+					Result = false
+				});
+			}
 
-			var token = jwtTokenHandler.CreateToken(tokenDescriptor);
-			var jwtToken = jwtTokenHandler.WriteToken(token);
-
-			return jwtToken;
+			return BadRequest(new AuthResult()
+			{
+				Errors = new List<string>()
+				{
+					"Invalid parameters"
+				},
+				Result = false
+			});
 		}
 	}
 }

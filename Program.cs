@@ -27,6 +27,22 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<CollectionService>();
 builder.Services.AddScoped<ItemService>();
+builder.Services.AddScoped<AuthenticationService>();
+
+// this key shoud not be taken from the env file and would normally be stored in a more secure place
+var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value);
+var tokenValidationParameters = new TokenValidationParameters() 
+{
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = new SymmetricSecurityKey(key),
+    ValidateIssuer = true, // set to false for development purposes
+    ValidateAudience = true, // set to false for development purposes
+    RequireExpirationTime = true, // set to false for development purposes
+    ValidateLifetime = true,
+    ValidAudience = "Collector",
+    ValidIssuer = "Collectors",
+    ClockSkew = TimeSpan.Zero
+};
 
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
 
@@ -38,20 +54,11 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(jwt => 
 {
-    // this key shoud not be taken from the env file and would normally be stored in a more secure place
-    var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value);
-
     jwt.SaveToken = true;
-    jwt.TokenValidationParameters = new TokenValidationParameters()
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false, // set to false for development purposes
-        ValidateAudience = false, // set to false for development purposes
-        RequireExpirationTime = false, // set to false for development purposes
-        ValidateLifetime = true
-    };
+    jwt.TokenValidationParameters = tokenValidationParameters;
 });
+
+builder.Services.AddSingleton(tokenValidationParameters);
 
 builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<AppDbContext>();
 

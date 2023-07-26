@@ -8,6 +8,7 @@ namespace Data
 	{
 		public DbSet<Collection> Collections { get; set; }
 		public DbSet<Item> Items { get; set; }
+		public DbSet<RefreshToken> RefreshTokens { get; set; }
 		public AppDbContext(DbContextOptions<AppDbContext>options) : base(options)
 		{
 			
