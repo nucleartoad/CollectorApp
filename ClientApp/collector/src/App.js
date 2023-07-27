@@ -1,16 +1,18 @@
 import * as React from "react";
 import { Routes, Route } from "react-router-dom";
 
+import './assets/Register.css';
+
 import Home from "./pages/Home";
 import About from "./pages/About";
+import Register from './pages/Register'
 
-export default function App() {
+function App() {
     return (
         <div className="App">
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="about" element={<About />} />
-            </Routes>
+            <Register />
         </div>
     );
 }
+
+export default App;

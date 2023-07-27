@@ -57,7 +57,7 @@ namespace Controllers
 
 					if (isCreated.Succeeded)
 					{
-						return Ok();
+						return Ok(await _service.GenerateJwtToken(newUser));
 					}
 
 					return BadRequest(new AuthResult()
