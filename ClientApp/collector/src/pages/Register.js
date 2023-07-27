@@ -1,11 +1,12 @@
 import { useRef, useState, useEffect } from "react";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import axios from "../api/axios";
+const REGISTER_URL = "/Authentication/Register";
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[!@#$%])(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,24}$/;
-const REGISTER_URL = "Authentication/Register";
 
 const Register = () => {
     const userRef = useRef();
@@ -66,8 +67,10 @@ const Register = () => {
             console.log(response.data);
             console.log(response.data.token);
             console.log(JSON.stringify(response));
+            setUser('');
+            setPassword('');
             setSuccess(true);
-            // clear input fields
+            console.log(success);
         } catch (error) {
             if (!error?.response) {
                 setErrorMessage("No Sever Response");

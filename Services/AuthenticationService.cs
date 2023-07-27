@@ -65,7 +65,7 @@ namespace Services
 				JwtId = token.Id,
 				Token = RandomStringGeneration(23), // generate a refresh token
 				AddedDate = DateTime.UtcNow,
-				ExpiryDate = DateTime.UtcNow.AddDays(1),
+				ExpiryDate = DateTime.UtcNow.AddMinutes(30),
 				IsRevoked = false,
 				IsUsed = false,
 				UserId = user.Id
