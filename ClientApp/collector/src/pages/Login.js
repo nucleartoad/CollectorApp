@@ -1,12 +1,12 @@
-import { useRef, useState, useEffect } from "react";
-import useAuth from '../hooks/useAuth';
+import { useRef, useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { userContext } from "../context/userContext";
 
 import axios from '../api/axios';
 const LOGIN_URL = '/Authentication/Login';
 
 const Login = () => {
-    const { setAuth } = useAuth();
+    const { user, setUser } = useContext(userContext);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -15,7 +15,7 @@ const Login = () => {
     const userRef = useRef();
     const errRef = useRef();
 
-    const [username, setUser] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -39,9 +39,22 @@ const Login = () => {
                 }
             );
             console.log(JSON.stringify(response?.data.token));
-            const accessToken = response?.data?.token;
-            setAuth({ username, password, accessToken })
-            setUser('');
+            const token = response?.data?.token;
+            const refreshToken = response?.data?.refreshToken;
+
+            console.log(token);
+            console.log(refreshToken);
+
+            const user = ({ 
+                username: username, 
+                token: token,
+                refreshToken: refreshToken
+            });
+            setUser(user);
+
+            console.log(JSON.stringify(user));
+
+            setUsername('');
             setPassword('');
             navigate(from, { replace: true });
         } catch (error) {
@@ -66,7 +79,7 @@ const Login = () => {
             <h1>Sign In</h1>
             <form onSubmit={handleSubmit}>
                 <label htmlFor="username">Username:</label>
-                <input type="text" id="" ref={userRef} autoComplete="off" onChange={(e) => setUser(e.target.value)} value={username} required />
+                <input type="text" id="" ref={userRef} autoComplete="off" onChange={(e) => setUsername(e.target.value)} value={username} required />
                 <label htmlFor="password">Password:</label>
                 <input type="password" id="password" onChange={(e) => setPassword(e.target.value)} value={password} required />
                 <button>Sign In</button>

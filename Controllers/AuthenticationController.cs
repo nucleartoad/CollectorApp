@@ -15,6 +15,7 @@ namespace Controllers
 	{
 		private static AuthenticationService _service;
 		private readonly UserManager<IdentityUser> _userManager;
+		
 		// private readonly JwtConfig _jwtConfig;
 
 		public AuthenticationController (

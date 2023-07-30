@@ -66,7 +66,8 @@ const Register = () => {
             });
             console.log(response.data);
             console.log(response.data.token);
-            console.log(JSON.stringify(response));
+            console.log(response.data.refreshToken);
+            // console.log(JSON.stringify(response));
             setUser('');
             setPassword('');
             setSuccess(true);

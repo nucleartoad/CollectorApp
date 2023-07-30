@@ -76,6 +76,8 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 var app = builder.Build();
 
 app.UseCors();

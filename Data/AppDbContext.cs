@@ -18,7 +18,7 @@ namespace Data
 		{
 			base.OnModelCreating(modelBuilder);
 			modelBuilder.Entity<Collection>().HasMany(t => t.Items);
-			modelBuilder.Entity<Item>();
+			modelBuilder.Entity<Item>().HasOne(t => t.Collection);
 		}
 	}
 }
