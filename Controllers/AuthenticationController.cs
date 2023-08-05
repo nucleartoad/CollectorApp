@@ -15,6 +15,7 @@ namespace Controllers
 	{
 		private static AuthenticationService _service;
 		private readonly UserManager<IdentityUser> _userManager;
+		
 		// private readonly JwtConfig _jwtConfig;
 
 		public AuthenticationController (
@@ -57,7 +58,7 @@ namespace Controllers
 
 					if (isCreated.Succeeded)
 					{
-						return Ok();
+						return Ok(await _service.GenerateJwtToken(newUser));
 					}
 
 					return BadRequest(new AuthResult()

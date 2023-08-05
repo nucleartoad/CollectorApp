@@ -7,6 +7,12 @@ using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+
+using System.Threading;
+
+using Models.Dtos;
 
 
 namespace Controllers
@@ -22,40 +28,49 @@ namespace Controllers
 		}
 
 		// get collections
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpGet]
 		public async Task<ActionResult<List<Collection>>> GetCollections()
 		{
-			var collections = await _service.GetCollections();
+			string username = User.Identity.Name;
+			Thread.Sleep(1000);
+			var collections = await _service.GetCollections(username);
+
 			if(collections == null) 
 			{
 				return NotFound();
 			}
 
-			return collections;
+			return Ok(collections);
 		}
 
 		// get collection
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<Collection>> GetCollection(int id)
 		{
+			string username = User.Identity.Name;
 			var collection = await _service.GetCollection(id);
 			if(collection == null)
 			{
 				return NotFound();
 			}
 
-			return collection;
+			return Ok(collection);
 		}
 
 		// create collection
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPost]
-		public async Task<IActionResult> CreateCollection(Collection collection)
+		public async Task<IActionResult> CreateCollection([FromBody] CreateCollectionDto collectionDto)
 		{
-			var newCollection = await _service.CreateCollection(collection);
+			string username = User.Identity.Name;
+			var newCollection = await _service.CreateCollection(collectionDto, username);
 			return CreatedAtAction(nameof(GetCollection), new { id = newCollection.Id }, newCollection);
 		}
 
 		// update collection
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateCollection(int id, Collection collection)
 		{
@@ -77,10 +92,11 @@ namespace Controllers
 		}
 
 		// delete collection
-		[HttpDelete]
-		public async Task<IActionResult> DeleteCollection(int id)
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpDelete("{collectionId}")]
+		public async Task<IActionResult> DeleteCollection(int collectionId)
 		{
-			await _service.DeleteCollection(id);
+			await _service.DeleteCollection(collectionId);
 			return NoContent();
 		}
 	}

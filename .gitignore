@@ -5,4 +5,5 @@ CollectorApp.db
 .vscode
 CollectorApp.db-shm
 CollectorApp.db-wal
+
 /ClientApp/collector/node_modules
