@@ -10,16 +10,20 @@ function Home() {
         const token = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         if(localStorage.getItem('loggedIn') == true) {
-            const response = await axios.post('/Authentication/Logout', 
-                {
-                    Token: token, 
-                    RefreshToken: refreshToken,
-                    headers: {
-                        'Content-Type' : 'application/json',
-                    },
-                    withCredentials: true
-                }
-            );
+            try {
+                const response = await axios.post('/Authentication/Logout', 
+                    {
+                        Token: token, 
+                        RefreshToken: refreshToken,
+                        headers: {
+                            'Content-Type' : 'application/json',
+                        },
+                        withCredentials: true
+                    }
+                );
+            } catch (error) {
+                console.log(error);
+            };
         };
         
         localStorage.clear();
@@ -32,12 +36,6 @@ function Home() {
             <br />
             <Link to="/collections">Collections</Link><br />
             <Link onClick={logout} to="/logout">Logout</Link><br />
-
-            <br />
-
-            <div>{localStorage.getItem('refreshToken')}</div>
-            <div>{localStorage.getItem('accessToken')}</div>
-            <div>{localStorage.getItem('username')}</div>
         </div>
     );
 };

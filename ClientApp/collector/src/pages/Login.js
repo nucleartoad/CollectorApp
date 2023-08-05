@@ -71,8 +71,8 @@ const Login = () => {
                 setErrorMessage('Login Failed');
             }
             errRef.current.focus();
-        }
-    }
+        };
+    };
 
     return (
         <div>

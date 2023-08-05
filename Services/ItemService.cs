@@ -1,6 +1,7 @@
 using Data;
 using Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 using Models.Dtos;
 
@@ -15,12 +16,14 @@ namespace Services
 		}
 
 		public async Task<Item> GetItem(int itemId) {
+			Thread.Sleep(1000);
 			Item item = await _context.Items.FirstOrDefaultAsync( e => e.Id == itemId );
 			return item;
 		}
 
 		public async Task<List<Item>> GetItemsFromCollection(string collectionId)
 		{
+			Thread.Sleep(1000);
 			List<Item> items = await _context.Items.Where( e => e.CollectionId == collectionId).ToListAsync();
 			return items;
 		}
@@ -45,9 +48,9 @@ namespace Services
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task DeleteItem(int id)
+		public async Task DeleteItem(int itemId)
 		{
-			var item = await _context.Items.FindAsync(id);
+			var item = await _context.Items.FindAsync(itemId);
 			_context.Items.Remove(item);
 			await _context.SaveChangesAsync();
 		}

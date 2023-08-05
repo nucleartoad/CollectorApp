@@ -7,15 +7,19 @@ const Collections = () => {
 
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
+        try {
+            (async () => {
+                const response = await axios.get('/Collection',{
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                setCollections(response.data);
+            })();
+        } catch (error) {
+            console.log(error);
+        };
 
-        (async () => {
-            const response = await axios.get('/Collection',{
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
-            setCollections(response.data);
-        })();
     }, [])
 
     return (

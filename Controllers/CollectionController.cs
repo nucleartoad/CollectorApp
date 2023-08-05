@@ -10,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
+using System.Threading;
+
 using Models.Dtos;
 
 
@@ -31,6 +33,7 @@ namespace Controllers
 		public async Task<ActionResult<List<Collection>>> GetCollections()
 		{
 			string username = User.Identity.Name;
+			Thread.Sleep(1000);
 			var collections = await _service.GetCollections(username);
 
 			if(collections == null) 
@@ -47,15 +50,11 @@ namespace Controllers
 		public async Task<ActionResult<Collection>> GetCollection(int id)
 		{
 			string username = User.Identity.Name;
-
+			Thread.Sleep(1000);
 			var collection = await _service.GetCollection(id);
 			if(collection == null)
 			{
 				return NotFound();
-			}
-			if (collection.Username != username) 
-			{
-				return Unauthorized("This is not your collection");
 			}
 
 			return Ok(collection);
@@ -95,10 +94,10 @@ namespace Controllers
 
 		// delete collection
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-		[HttpDelete]
-		public async Task<IActionResult> DeleteCollection(int id)
+		[HttpDelete("{collectionId}")]
+		public async Task<IActionResult> DeleteCollection(int collectionId)
 		{
-			await _service.DeleteCollection(id);
+			await _service.DeleteCollection(collectionId);
 			return NoContent();
 		}
 	}

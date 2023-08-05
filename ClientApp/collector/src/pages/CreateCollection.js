@@ -23,10 +23,10 @@ const CreateCollection = () => {
             );
             console.log(JSON.stringify(response));
 
-            navigate('/collections')
+            navigate('/collections/created-collection')
         } catch (error) {
             console.log(error);
-        }
+        };
     }
 
     return (

@@ -2,6 +2,7 @@ using Models;
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Models.Dtos;
+using System.Threading;
 
 namespace Services
 {
@@ -15,12 +16,14 @@ namespace Services
 
 		public async Task<List<Collection>> GetCollections(string Username)
 		{
+			Thread.Sleep(1000);
 			var collections = await _context.Collections.Where(e => e.Username == Username).ToListAsync();
 			return collections;
 		}
 
 		public async Task<Collection> GetCollection(int id)
 		{
+			Thread.Sleep(1000);
 			var collection = await _context.Collections.FirstOrDefaultAsync( e => e.Id == id );
 			return collection;
 		}
@@ -48,6 +51,10 @@ namespace Services
 		{
 			var collection = await _context.Collections.FindAsync(id);
 			_context.Collections.Remove(collection);
+
+			// delete all items from collection
+			_context.Items.Where(e => e.CollectionId == id.ToString()).ExecuteDelete();
+
 			await _context.SaveChangesAsync();
 		}
 	}

@@ -1,9 +1,10 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "../api/axios";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const Collection = () => {
+    const navigate = useNavigate();
     const params = useParams();
 
     const [name, setName] = useState('');
@@ -32,15 +33,35 @@ const Collection = () => {
     };
 
     useEffect(() => {
-        (async () => {
-            const response = await axios.get(`/Item/${collectionId}`, {
+        try {
+            (async () => {
+                const response = await axios.get(`/Item/${collectionId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                setItems(response.data);
+            })();
+        } catch (error) {
+            console.log(error);
+        };
+    }, []);
+
+    const deleteCollection = async () => {
+        try {
+            const response = await axios.delete(`/Collection/${collectionId}`, {
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`
                 }
             });
-            setItems(response.data);
-        })();
-    }, [])
+
+            navigate('/collections');
+        } catch (error) {
+            console.log(error);
+        };
+    };
 
     return (
         <div>
@@ -58,6 +79,8 @@ const Collection = () => {
                 );
             })}
             <br />
+
+            <button onClick={deleteCollection}>Delete Collection</button>
 
             <Link to={`/collections/${collectionId}/add-item`}>Add new Item</Link><br />
             <Link to="/collections">Back to all collections</Link><br />

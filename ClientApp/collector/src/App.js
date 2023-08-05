@@ -13,6 +13,7 @@ import Collections from "./pages/Collections";
 import Item from "./pages/Item";
 import AddItem from "./pages/AddItem";
 import CreateCollection from "./pages/CreateCollection";
+import CreatedCollection from "./pages/CreatedCollection";
 import Missing from "./pages/Missing";
 import ProtectedRoute from './util/ProtectedRoute';
 
@@ -44,6 +45,12 @@ function App() {
             <Route path="collections/create-collection" element={
                 <ProtectedRoute>
                     <CreateCollection />
+                </ProtectedRoute>
+            } />
+
+            <Route path="collections/created-collection" element={
+                <ProtectedRoute>
+                    <CreatedCollection />
                 </ProtectedRoute>
             } />
 

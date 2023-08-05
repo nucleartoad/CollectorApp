@@ -24,6 +24,7 @@ namespace Controllers
 		[HttpGet("{collectionId}/{itemId}")]
 		public async Task<ActionResult<Item>> GetItem(int collectionId, int itemId)
 		{
+			Thread.Sleep(1000);
 			Item item = await _service.GetItem(itemId);
 			if(item == null)
 			{
@@ -38,6 +39,7 @@ namespace Controllers
 		[HttpGet("{collectionId}")]
 		public async Task<ActionResult<List<Item>>> GetItemsFromCollection(int collectionId)
 		{
+			Thread.Sleep(1000);
 			List<Item> items = await _service.GetItemsFromCollection(collectionId.ToString());
 			if(items == null)
 			{
@@ -81,10 +83,10 @@ namespace Controllers
 		
 		// delete item
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-		[HttpDelete]
-		public async Task<IActionResult> DeleteItem(int id)
+		[HttpDelete("{collectorId}/{itemId}")]
+		public async Task<IActionResult> DeleteItem(int collectorId, int itemId)
 		{
-			await _service.DeleteItem(id);
+			await _service.DeleteItem(itemId);
 			return NoContent();
 		}
 	}
