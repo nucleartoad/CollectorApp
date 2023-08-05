@@ -2,6 +2,10 @@ using Services;
 using Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+
+using Models.Dtos;
 
 namespace Controllers
 {
@@ -16,10 +20,11 @@ namespace Controllers
 		}
 		
 		// get item
-		[HttpGet]
-		public async Task<ActionResult<Item>> GetItem(int id)
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpGet("{collectionId}/{itemId}")]
+		public async Task<ActionResult<Item>> GetItem(int collectionId, int itemId)
 		{
-			var item = await _service.GetItem(id);
+			Item item = await _service.GetItem(itemId);
 			if(item == null)
 			{
 				return NotFound();
@@ -28,15 +33,32 @@ namespace Controllers
 			return item;
 		}
 
-		// add item
-		[HttpPost]
-		public async Task<IActionResult> AddItem(Item item)
+		// get items
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpGet("{collectionId}")]
+		public async Task<ActionResult<List<Item>>> GetItemsFromCollection(int collectionId)
 		{
-			var newItem = await _service.AddItem(item);
-			return CreatedAtAction(nameof(newItem), new { id = newItem.Id}, newItem);
+			List<Item> items = await _service.GetItemsFromCollection(collectionId.ToString());
+			if(items == null)
+			{
+				return NotFound();
+			}
+
+			return items;
+		}
+
+		// add item
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpPost]
+		public async Task<IActionResult> AddItem([FromBody] ItemDto itemDto)
+		{
+			var newItem = await _service.AddItem(itemDto);
+			// return CreatedAtAction(nameof(newItem), new { id = newItem.Id}, newItem);
+			return Ok(newItem);
 		}
 
 		// update item
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateItem(int id, Item item)
 		{
@@ -58,6 +80,7 @@ namespace Controllers
 		}
 		
 		// delete item
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpDelete]
 		public async Task<IActionResult> DeleteItem(int id)
 		{

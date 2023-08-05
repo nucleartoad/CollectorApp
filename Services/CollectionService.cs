@@ -1,6 +1,7 @@
 using Models;
 using Data;
 using Microsoft.EntityFrameworkCore;
+using Models.Dtos;
 
 namespace Services
 {
@@ -12,21 +13,27 @@ namespace Services
 			_context = context;
 		}
 
-		public async Task<List<Collection>> GetCollections()
+		public async Task<List<Collection>> GetCollections(string Username)
 		{
-			var collections = await _context.Collections.Include( e => e.Items ).ToListAsync();
+			var collections = await _context.Collections.Where(e => e.Username == Username).ToListAsync();
 			return collections;
 		}
 
 		public async Task<Collection> GetCollection(int id)
 		{
-			var collection = await _context.Collections.Include( e => e.Items ).FirstOrDefaultAsync( e => e.Id == id );
+			var collection = await _context.Collections.FirstOrDefaultAsync( e => e.Id == id );
 			return collection;
 		}
 
-		public async Task<Collection> CreateCollection(Collection collection)
+		public async Task<Collection> CreateCollection(CreateCollectionDto collectionDto, string username)
 		{
-			_context.Add(collection);
+			Collection collection = new Collection() {
+				Name = collectionDto.Name,
+				Username = username,
+				Description = collectionDto.Description
+			};
+
+			await _context.AddAsync(collection);
 			await _context.SaveChangesAsync();
 			return collection;
 		}

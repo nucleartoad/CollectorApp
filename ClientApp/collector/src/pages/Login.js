@@ -1,16 +1,12 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { userContext } from "../context/userContext";
 
 import axios from '../api/axios';
 const LOGIN_URL = '/Authentication/Login';
 
 const Login = () => {
-    const { user, setUser } = useContext(userContext);
-
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
 
     const userRef = useRef();
     const errRef = useRef();
@@ -38,25 +34,32 @@ const Login = () => {
                     withCredentials: true
                 }
             );
-            console.log(JSON.stringify(response?.data.token));
-            const token = response?.data?.token;
+            console.log(JSON.stringify(response?.data));
+
             const refreshToken = response?.data?.refreshToken;
+            const token = response?.data?.token;
 
-            console.log(token);
-            console.log(refreshToken);
+            localStorage.clear();
+            localStorage.setItem('accessToken', response?.data?.token);
+            localStorage.setItem('refreshToken', response?.data?.refreshToken);
 
-            const user = ({ 
-                username: username, 
-                token: token,
-                refreshToken: refreshToken
-            });
-            setUser(user);
+            const response2 = await axios.get('/Authentication/GetUser', 
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                }
+            );
+            console.log(JSON.stringify(response2?.data));
 
-            console.log(JSON.stringify(user));
+            localStorage.setItem('username', response2.data);
+            localStorage.setItem('loggedIn', true);
 
             setUsername('');
             setPassword('');
-            navigate(from, { replace: true });
+
+            navigate('/');
         } catch (error) {
             if (!error?.response) {
                 setErrorMessage('No Server Response');
@@ -79,16 +82,15 @@ const Login = () => {
             <h1>Sign In</h1>
             <form onSubmit={handleSubmit}>
                 <label htmlFor="username">Username:</label>
-                <input type="text" id="" ref={userRef} autoComplete="off" onChange={(e) => setUsername(e.target.value)} value={username} required />
+                <input type="text" ref={userRef} autoComplete="off" onChange={(e) => setUsername(e.target.value)} value={username} required />
                 <label htmlFor="password">Password:</label>
-                <input type="password" id="password" onChange={(e) => setPassword(e.target.value)} value={password} required />
+                <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} required />
                 <button>Sign In</button>
             </form>
             <p>
                 Need an Account?<br />
                 <span className="line">
-                    {/*put router link here*/}
-                    <a href="#">Sign Up</a>
+                    <Link to='register'>Register</Link>
                 </span>
             </p>
         </div>

@@ -1,6 +1,6 @@
 const Missing = () => {
     return (
-        <p>missing route</p>
+        <p>page could not be found</p>
     )
 }
 

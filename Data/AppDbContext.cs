@@ -17,8 +17,6 @@ namespace Data
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
-			modelBuilder.Entity<Collection>().HasMany(t => t.Items);
-			modelBuilder.Entity<Item>().HasOne(t => t.Collection);
 		}
 	}
 }
