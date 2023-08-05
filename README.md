@@ -1,4 +1,6 @@
+
 # CollectorApp
+
 ####
 
 ## Preparing the application
@@ -9,6 +11,13 @@ install the dotnet dependencies
 
 ```bash
 $ dotnet restore
+```
+
+prepare the sqlite database
+
+```bash
+$ dotnet ef migrations add
+$ dotnet ef database update
 ```
 
 ### frontend
