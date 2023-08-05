@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Route, useNavigate } from "react-router-dom";
+import axios from "../api/axios";
 
 const ProtectedRoute = (props) => {
     const navigate = useNavigate();

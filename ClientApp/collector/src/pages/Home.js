@@ -32,9 +32,9 @@ function Home() {
 
     return (
         <div>
-            <h1>This is the User home page</h1>
+            <h1>Welcome, {localStorage.getItem('username')}.</h1>
             <br />
-            <Link to="/collections">Collections</Link><br />
+            <Link to="/collections">My Collections</Link><br /><br />
             <Link onClick={logout} to="/logout">Logout</Link><br />
         </div>
     );

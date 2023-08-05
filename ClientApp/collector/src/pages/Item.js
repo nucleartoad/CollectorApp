@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import axios from "../api/axios";
 import { useState } from "react";
 
@@ -13,6 +13,7 @@ const Item = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [value, setValue] = useState('');
+    const [loaded, setLoaded] = useState(false);
 
     try {
         (async () => {
@@ -27,6 +28,7 @@ const Item = () => {
             setName(data.name);
             setDescription(data.description);
             setValue(data.value);
+            setLoaded(true);
         })();
     } catch (error) {
         console.log(error);
@@ -49,14 +51,17 @@ const Item = () => {
 
     return (
         <>
-            <h1>{name}</h1>
-            <p>{description}</p>
-            <p>{value}</p>
-            <p>this is the page for item {params.itemId}</p>
-            <p>this item is part of the collection {params.collectionId}</p>
-            <br />
-
-            <button onClick={removeItem}>Delete Item</button>
+            {loaded
+                ? <>
+                    <h1>{name}</h1>
+                    <p>{description}</p>
+                    <p>${value}</p>
+                    <br />
+                    <button onClick={removeItem}>Delete Item</button>
+                </>
+                : <p>loading item...</p>
+            }
+            <br /><br /><Link to="/">Home</Link><br />
         </>
     )
 }

@@ -79,18 +79,21 @@ const Login = () => {
             <p ref={errRef} className={errorMessage ? "errormessage" : "hide"} aria-live="assertive">
                 {errorMessage}
             </p>
-            <h1>Sign In</h1>
+            <h1>Welcome to the Collector App</h1>
+            <p>Please Login to see your collections.</p>
             <form onSubmit={handleSubmit}>
                 <label htmlFor="username">Username:</label>
                 <input type="text" ref={userRef} autoComplete="off" onChange={(e) => setUsername(e.target.value)} value={username} required />
+                <br />
                 <label htmlFor="password">Password:</label>
                 <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} required />
+                <br />
                 <button>Sign In</button>
             </form>
             <p>
-                Need an Account?<br />
+                Don't have an account?<br />
                 <span className="line">
-                    <Link to='register'>Register</Link>
+                    <Link to='/register'>Register</Link>
                 </span>
             </p>
         </div>

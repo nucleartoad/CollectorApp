@@ -27,18 +27,25 @@ const CreateCollection = () => {
         } catch (error) {
             console.log(error);
         };
-    }
+    };
+
+    const cancel = () => {
+        navigate('/collections');
+    };
 
     return (
         <div>
-            <h1>this is the create collection page</h1>
+            <h1>Create a new collection</h1>
             <form onSubmit={handleSubmit}>
-                <label htmlFor="name">Name</label>
+                <label htmlFor="name">Collection name</label>
                 <input type="text" onChange={(e) => setName(e.target.value)} value={name} required/>
+                <br />
                 <label htmlFor="description">Description</label>
                 <input type="text" onChange={(e) => setDescription(e.target.value)} value={description} required/>
-                <button>Create</button>
+                <br />
+                <button>Create new Collection</button>
             </form>
+            <button onClick={cancel}>Cancel</button>
         </div>
     );
 };

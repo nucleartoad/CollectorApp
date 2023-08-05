@@ -50,7 +50,6 @@ namespace Controllers
 		public async Task<ActionResult<Collection>> GetCollection(int id)
 		{
 			string username = User.Identity.Name;
-			Thread.Sleep(1000);
 			var collection = await _service.GetCollection(id);
 			if(collection == null)
 			{

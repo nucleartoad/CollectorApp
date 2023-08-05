@@ -1,7 +1,12 @@
+import { Link } from "react-router-dom";
+
 const Missing = () => {
     return (
-        <p>page could not be found</p>
-    )
-}
+        <>
+            <h2>page could not be found</h2>
+            <br /><Link to="/">Click to go back Home</Link><br />
+        </>
+    );
+};
 
 export default Missing;

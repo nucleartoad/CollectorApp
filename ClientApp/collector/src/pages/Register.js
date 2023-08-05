@@ -3,6 +3,7 @@ import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import axios from "../api/axios";
+import { Link } from "react-router-dom";
 const REGISTER_URL = "/Authentication/Register";
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
@@ -112,6 +113,7 @@ const Register = () => {
                     onFocus={() => setUserFocus(true)}
                     onBlur={() => setUserFocus(false)}
                 />
+                <br />
                 <p id="uidnote" className={userFocus && username && !validName ? "instructions" : "hide"}>
                     <FontAwesomeIcon icon={faInfoCircle} />
                     4 to 24 characters.
@@ -140,6 +142,7 @@ const Register = () => {
                     onFocus={() => setPasswordFocus(true)}
                     onBlur={() => setPasswordFocus(false)}
                 />
+                <br />
                 <p id="pwdnote" className={passwordFocus && !validPassword ? "instructions" : "hide"}>
                     <FontAwesomeIcon icon={faInfoCircle} />
                     8 to 24 characters.
@@ -169,6 +172,7 @@ const Register = () => {
                     onFocus={() => setMatchFocus(true)}
                     onBlur={() => setMatchFocus(false)}
                 />
+                <br />
                 <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "hide"}>
                     <FontAwesomeIcon icon={faInfoCircle} />
                     Must match the first password input field.
@@ -178,11 +182,10 @@ const Register = () => {
             </form>
 
             <p>
-                Already registered?
+                Already have an account?
                 <br />
                 <span className="line">
-                    {/*put router link here*/}
-                    <a href="#">Sign In</a>
+                    <Link to='/login'>Login</Link>
                 </span>
             </p>
         </div>

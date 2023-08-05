@@ -23,7 +23,6 @@ namespace Services
 
 		public async Task<Collection> GetCollection(int id)
 		{
-			Thread.Sleep(1000);
 			var collection = await _context.Collections.FirstOrDefaultAsync( e => e.Id == id );
 			return collection;
 		}

@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 const Collection = () => {
     const navigate = useNavigate();
     const params = useParams();
+    const [loaded, setLoaded] = useState(false);
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -42,6 +43,7 @@ const Collection = () => {
                     }
                 });
                 setItems(response.data);
+                setLoaded(true);
             })();
         } catch (error) {
             console.log(error);
@@ -65,25 +67,28 @@ const Collection = () => {
 
     return (
         <div>
-            <h1>this is the collection page for {JSON.stringify(params)}</h1>
-            <p>
-                {name} <br />
-                {description} <br />
-            </p>
-
-            {items.map(item => {
-                return (
-                    <div key={item.id}>
-                        <Link to={`/collections/${collectionId}/${item.id}`}>{item.name}</Link>
-                    </div>
-                );
-            })}
+            <h1>{name}</h1>
+            <p>{description}</p>
+            <h3>Items:</h3>
+            {loaded
+                ? items.map(item => {
+                    return (
+                        <div key={item.id}>
+                            <Link to={`/collections/${collectionId}/${item.id}`}>{item.name}</Link>
+                        </div>
+                    );
+                })
+                : <div>loading items...</div>
+            }
             <br />
 
             <button onClick={deleteCollection}>Delete Collection</button>
 
+            <br />
             <Link to={`/collections/${collectionId}/add-item`}>Add new Item</Link><br />
             <Link to="/collections">Back to all collections</Link><br />
+
+            <br /><Link to="/">Home</Link><br />
             <br />
         </div>
     );
