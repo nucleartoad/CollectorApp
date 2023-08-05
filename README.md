@@ -3,6 +3,19 @@
 
 ####
 
+this is a simple collector webapp that features the ability to track anything that you may want to collect.
+
+##### features:
+
+- login and authentication
+- creation of collections
+- adding items to collections
+- deleting collections and items
+
+###### TODO:
+
+- feature to add images to collections and/or items
+
 ## Preparing the application
 
 ### backend
